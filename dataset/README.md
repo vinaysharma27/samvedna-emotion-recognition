@@ -176,15 +176,8 @@ SAMVEDNA is suited for a wide range of research and applied tasks:
 
 ## 📥 Access & Download
 
-> ⚠️ **Due to the large size of SAMVEDNA (~several GB of audio/video), the full dataset is not hosted directly on GitHub.**
-
 To access the dataset:
-
-| Option | Link |
-|---|---|
-| 📧 Request access via email | [Contact the authors](#-citation) |
-
-A **sample subset** (5 actors × 2 sentences × all emotions) is available in [`sample_data/`](./sample_data/) for quick testing.
+A **sample subset** (5 actors × 2 sentences × all emotions) is available for quick testing.
 
 Sample Video can be downloaded for the below given link : 
 
