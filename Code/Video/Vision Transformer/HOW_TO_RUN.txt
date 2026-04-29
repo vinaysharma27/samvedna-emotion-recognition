@@ -1,0 +1,55 @@
+===========================================================
+ How to Run This Project
+===========================================================
+
+STEP 1: Install Python
+-----------------------
+Download Python 3.9+ from: https://www.python.org/downloads/
+Make sure to check "Add Python to PATH" during installation.
+
+
+STEP 2: Install Required Libraries
+------------------------------------
+Open a terminal (Command Prompt on Windows) in this folder and run:
+
+    pip install -r requirements.txt
+
+This will install all necessary libraries automatically.
+
+
+STEP 3: Set Your Dataset Path
+-------------------------------
+Open the file:  samvedna_emotions.py
+Find this line (around line 76):
+
+    dataset_dir = Path(r'_______________________')
+
+Change the path inside to where YOUR dataset is stored on your computer.
+
+
+STEP 4: Run the Code
+---------------------
+In the terminal, run:
+
+    python vit.py
+
+The script will:
+  - Load your video dataset
+  - Extract frames from each video
+  - Train the ViT model for 20 epochs
+  - Save the best model checkpoint
+  - Print accuracy metrics
+  - Save a confusion matrix image: confusion_matrix.png
+
+
+STEP 5: View Results
+---------------------
+After training completes:
+  - confusion_matrix.png     → visual accuracy breakdown per emotion
+  - logs/                    → training log files
+  - samvedna-vit-emotions/   → saved model checkpoints
+
+===========================================================
+  NOTE: A GPU (NVIDIA CUDA) is strongly recommended.
+  Training on CPU will work but will be much slower.
+===========================================================

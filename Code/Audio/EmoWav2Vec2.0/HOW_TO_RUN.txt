@@ -1,0 +1,102 @@
+===========================================================
+  HOW TO RUN 
+===========================================================
+
+PREREQUISITES:
+  - Python 3.9 or higher
+  - NVIDIA GPU with CUDA (strongly recommended)
+  - Internet connection (for first-time model download ~360 MB)
+
+
+STEP 1: Install Python
+------------------------
+Download from: https://www.python.org/downloads/
+Check "Add Python to PATH" during installation.
+
+
+STEP 2: Install Required Libraries
+-------------------------------------
+Open terminal / Command Prompt in this folder:
+
+    pip install -r requirements.txt
+
+If librosa causes issues on Windows:
+    pip install librosa soundfile
+
+
+STEP 3: Prepare Your Dataset
+-------------------------------
+Organize audio files like this:
+
+    audio/
+    ├── Anger/    ← .wav or .mp3 files
+    ├── Disgust/
+    ├── Fear/
+    ├── Happy/
+    ├── Neutral/
+    └── Sad/
+
+See docs/DATASET_STRUCTURE.md for full details.
+
+
+STEP 4: Update Paths in the Code
+----------------------------------
+Open wav2vec2_emotion_recognition.py
+
+Line 48 — Dataset path:
+    DATA_PATH = r'E:\Emotion Datasets\SAMVEDNA Dataset\audio'
+    → Change to your actual audio folder path
+
+Line 49 — Output directory (optional):
+    OUTPUT_DIR = "./wav2vec2_finetune_SAMVEDNA"
+    → Change if you want outputs saved elsewhere
+
+
+STEP 5: Run the Code
+----------------------
+    python wav2vec2_emotion_recognition.py
+
+On FIRST run:
+  → Wav2Vec2 weights (~360 MB) will be downloaded automatically
+  → Requires internet connection
+
+The script will:
+  ✓ Load all audio files from emotion folders
+  ✓ Create stratified train/val split (80/20)
+  ✓ Initialize Wav2Vec2ForSequenceClassification
+  ✓ Phase 1 (Epochs 1–2): Train with CNN frozen
+  ✓ Phase 2 (Epoch 3+): Unfreeze CNN, full fine-tuning
+  ✓ Early stopping (patience=5 epochs)
+  ✓ Save best model checkpoint
+  ✓ Plot and save training curves
+  ✓ Generate confusion matrix + classification report
+  ✓ Save full HuggingFace model for easy inference
+
+
+STEP 6: View Outputs
+----------------------
+All outputs saved in: ./wav2vec2_finetune_SAMVEDNA/
+
+  best_model.pth                          → best model weights
+  finetuned_wav2vec2_model_SAMVEDNA/      → full HuggingFace model
+  training_curves.png                     → loss & accuracy curves
+  confusion_matrix.png                    → confusion matrix
+  training_history.csv                    → epoch-by-epoch metrics
+
+
+INFERENCE (predict a new audio file):
+---------------------------------------
+After training, use predict_emotion() at the bottom of script:
+
+    emotion, confidence = predict_emotion(
+        'your_audio.wav',
+        inference_model,
+        inference_feature_extractor_obj,
+        DEVICE,
+        id2label
+    )
+    print(emotion)      # e.g. "Happy"
+    print(confidence)   # e.g. 0.94
+
+
+

@@ -1,0 +1,57 @@
+===========================================================
+ How to Run This Project
+===========================================================
+
+STEP 1: Install Python
+-----------------------
+Download Python 3.9+ from: https://www.python.org/downloads/
+Check "Add Python to PATH" during installation.
+
+
+STEP 2: Install Required Libraries
+------------------------------------
+Open terminal/Command Prompt in this folder and run:
+
+    pip install -r requirements.txt
+
+
+STEP 3: Set Your Dataset Path
+-------------------------------
+Open:  samvedna6_emotions.py
+Find line 19:
+
+    dataset_path = '____________________'
+
+Change it to where your dataset folder is stored.
+
+Also update output paths on lines 332, 343, 368 if needed
+(currently saves to D:/ drive).
+
+
+STEP 4: Run the Code
+---------------------
+In the terminal:
+
+    python samvedna6_emotions.py
+
+The script will:
+  - Load all 6 emotion folders
+  - Extract every 10th frame from each video
+  - Resize frames to 48x48 and normalize
+  - Train ResNet-50 for 20 epochs
+  - Save the trained model (.h5)
+  - Save accuracy/loss plots
+  - Save confusion matrix
+  - Save classification report
+
+
+STEP 5: View Results
+---------------------
+After training:
+  - emotion_recognition_model.h5   → saved model
+  - training_history.xlsx          → epoch accuracy/loss
+  - training_plot.png              → accuracy & loss curves
+  - confusion_matrix.png           → per-class accuracy heatmap
+  - classification_report.txt      → precision, recall, F1
+
+

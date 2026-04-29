@@ -1,0 +1,106 @@
+===========================================================
+  HOW TO RUN — Samvedna Bi-LSTM Emotion Recognition
+===========================================================
+
+PREREQUISITES:
+  - Python 3.9 or higher
+  - NVIDIA GPU with CUDA (recommended for faster training)
+  - At least 4GB RAM
+
+
+STEP 1: Install Python
+------------------------
+Download from: https://www.python.org/downloads/
+Check "Add Python to PATH" during installation.
+
+
+STEP 2: Install Required Libraries
+-------------------------------------
+Open terminal/Command Prompt in this folder:
+
+    pip install -r requirements.txt
+
+Note: librosa may require additional system libraries.
+On Windows, if you face errors:
+    pip install librosa soundfile
+
+
+STEP 3: Prepare Your Dataset
+-------------------------------
+Organize your audio files like this:
+
+    audio/
+    ├── Anger/    ← .wav or .mp3 files
+    ├── Disgust/
+    ├── Fear/
+    ├── Happy/
+    ├── Sad/
+    └── Neutral/
+
+See docs/DATASET_STRUCTURE.md for full details.
+
+
+STEP 4: Update Dataset Path
+------------------------------
+Open bilstm_emotion_recognition.py
+Find line 57 and update:
+
+    'dataset_path': r'E:\Emotion Datasets\SAMVEDNA Dataset\audio',
+
+Change to your actual folder path.
+
+
+STEP 5: Run the Code
+----------------------
+    python bilstm_emotion_recognition.py
+
+The script will automatically:
+  ✓ Load and validate all audio files
+  ✓ Split into Train (80%) / Val (10%) / Test (10%)
+  ✓ Extract MFCC + Delta + Delta-Delta features
+  ✓ Build and train the Bi-LSTM model (up to 50 epochs)
+  ✓ Apply early stopping (patience=10)
+  ✓ Evaluate on test set
+  ✓ Generate and save all plots
+  ✓ Save model and results
+
+
+STEP 6: View Outputs
+----------------------
+After training completes, check these files:
+
+  bilstm_emotion_model.pt          → best model weights
+  bilstm_emotion_model_full.pth    → full model (easy reload)
+  bilstm_results.json              → all metrics + config
+  bilstm_training_history.png      → loss & accuracy curves
+  bilstm_confusion_matrix.png      → confusion matrix heatmap
+  bilstm_per_emotion_metrics.png   → per-class F1/Precision/Recall
+
+
+INFERENCE (predict a new audio file):
+---------------------------------------
+Use the predict_emotion() function at the bottom of the script:
+
+    result = predict_emotion('your_audio.wav', model, CONFIG, CONFIG['device'])
+    print(result['predicted_emotion'])  # e.g. "Happy"
+    print(result['confidence'])         # e.g. 0.92
+
+===========================================================
+  COMMON ISSUES
+===========================================================
+
+Issue: "No module named librosa"
+Fix:   pip install librosa soundfile
+
+Issue: "CUDA out of memory"
+Fix:   Reduce batch_size in CONFIG (try 16 or 8)
+
+Issue: "Dataset folder not found"
+Fix:   Check your dataset_path in CONFIG (line 57)
+       Make sure emotion folder names match exactly
+
+Issue: "0 samples loaded"
+Fix:   Check that audio files are .mp3/.wav/.ogg/.flac
+       and are placed directly inside emotion folders
+
+===========================================================

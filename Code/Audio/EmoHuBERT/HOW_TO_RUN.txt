@@ -1,0 +1,105 @@
+===========================================================
+  HOW TO RUN
+===========================================================
+
+PREREQUISITES:
+  - Python 3.9 or higher
+  - NVIDIA GPU with CUDA (strongly recommended — HuBERT is ~94M parameters)
+  - At least 8GB GPU VRAM (or 16GB RAM for CPU-only, very slow)
+  - Internet connection on first run (downloads pretrained model ~360MB)
+
+
+STEP 1: Install Python
+------------------------
+Download from: https://www.python.org/downloads/
+Check "Add Python to PATH" during installation.
+
+
+STEP 2: Install Required Libraries
+-------------------------------------
+Open terminal/Command Prompt in this folder:
+
+    pip install -r requirements.txt
+
+Note: If you face issues with librosa on Windows:
+    pip install librosa soundfile
+
+
+STEP 3: Prepare Your Dataset
+-------------------------------
+Organize your audio files like this:
+
+    audio/
+    ├── Anger/    ← .wav or .mp3 files
+    ├── Disgust/
+    ├── Fear/
+    ├── Happy/
+    ├── Sad/
+    └── Neutral/
+
+See docs/DATASET_STRUCTURE.md for full details.
+
+
+STEP 4: Update Dataset Path
+------------------------------
+Open hubert.py
+Find the CONFIG dictionary (~line 38) and update:
+
+    'dataset_path': r'E:\Emotion Datasets\SAMVEDNA Dataset\audio',
+
+Change to your actual folder path.
+
+
+STEP 5: (First Run) Download Pretrained HuBERT Model
+------------------------------------------------------
+On first run, the script will automatically download:
+    facebook/hubert-base-superb (~360MB)
+from Hugging Face Hub. Make sure you have internet access.
+
+The model is cached locally after the first download at:
+    Windows: C:\Users\<name>\.cache\huggingface\hub\
+    Linux/Mac: ~/.cache/huggingface/hub/
+
+
+STEP 6: Run the Code
+----------------------
+    python hubert.py
+
+The script will automatically:
+  ✓ Load and validate all audio files
+  ✓ Split into Train (80%) / Val (10%) / Test (10%)
+  ✓ Download HuBERT pretrained model (first run only)
+  ✓ Set up Wav2Vec2FeatureExtractor for audio preprocessing
+  ✓ Fine-tune HuBERT with a classification head (up to 20 epochs)
+  ✓ Apply early stopping (patience=5)
+  ✓ Evaluate on test set
+  ✓ Generate and save all plots
+  ✓ Save model and results
+
+
+STEP 7: View Outputs
+----------------------
+After training completes, check these files:
+
+  hubert_emotion_model.pt          → best model weights (state dict)
+  ./hubert_emotion_model/          → full HuggingFace model directory
+  hubert_results.json              → all metrics + config
+  hubert_training_history.png      → loss & accuracy curves
+  hubert_confusion_matrix.png      → confusion matrix heatmap
+  hubert_per_emotion_metrics.png   → per-class F1/Precision/Recall
+
+
+INFERENCE (predict a new audio file):
+---------------------------------------
+Use the predict_emotion() function at the bottom of the script:
+
+    result = predict_emotion('your_audio.wav', model, feature_extractor, CONFIG['device'])
+    print(result['predicted_emotion'])  # e.g. "Happy"
+    print(result['confidence'])         # e.g. 0.92
+
+To reload saved model later:
+    from transformers import HubertForSequenceClassification, Wav2Vec2FeatureExtractor
+    model = HubertForSequenceClassification.from_pretrained('./hubert_emotion_model')
+    feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained('./hubert_emotion_model')
+
+
