@@ -15,7 +15,7 @@
 
 ---
 
-[📥 Request Access](#-access--download) · [📄 Paper](#-citation) · [🔬 Use with EmoHuBERT](../EmoHuBERT) · [📊 Dataset Stats](#-dataset-statistics)
+[📥 Request Access](#-access--download)
 
 </div>
 
