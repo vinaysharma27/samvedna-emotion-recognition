@@ -186,20 +186,9 @@ To access the dataset:
 
 A **sample subset** (5 actors × 2 sentences × all emotions) is available in [`sample_data/`](./sample_data/) for quick testing.
 
----
+Sample Video can be downloaded for the below given link : 
 
----
-
----
-
-## 📬 Contact
-
-For dataset access requests, collaborations, or questions:
-
-- 📧 Email: `[--------------------]`
-- 🏫 Affiliation: `[-----------------]`
-
----
+https://drive.google.com/drive/folders/1mPk3-vFdVkGwlauo_X9FKqfGJuzMXONn?usp=drive_link
 
 <div align="center">
 
