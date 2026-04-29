@@ -190,18 +190,6 @@ A **sample subset** (5 actors × 2 sentences × all emotions) is available in [`
 
 ---
 
-## 📄 Citation
-
-If you use SAMVEDNA in your research, please cite:
-
-```bibtex
-@dataset{samvedna2026,
-  title     = {SAMVEDNA: A Multimodal Multilingual Emotion Recognition Dataset},
-  author    = {[Author Names]},
-  year      = {2026},
-}
-```
-
 ---
 
 ## 📬 Contact
@@ -215,7 +203,7 @@ For dataset access requests, collaborations, or questions:
 
 <div align="center">
 
-Made with ❤️ for the emotion AI research community
+
 
 <sub>SAMVEDNA · Multimodal Emotion Dataset · North India · 2026</sub>
 
