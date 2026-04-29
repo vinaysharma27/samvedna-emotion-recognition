@@ -179,7 +179,7 @@ SAMVEDNA is suited for a wide range of research and applied tasks:
 To access the dataset:
 A **sample subset** (5 actors × 2 sentences × all emotions) is available for quick testing.
 
-Sample Video can be downloaded for the below given link : 
+Sample Video can be downloaded from the below given link : 
 
 https://drive.google.com/drive/folders/1mPk3-vFdVkGwlauo_X9FKqfGJuzMXONn?usp=drive_link
 
@@ -187,6 +187,5 @@ https://drive.google.com/drive/folders/1mPk3-vFdVkGwlauo_X9FKqfGJuzMXONn?usp=dri
 
 
 
-<sub>SAMVEDNA · Multimodal Emotion Dataset · North India · 2026</sub>
 
 </div>
