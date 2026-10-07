@@ -31,26 +31,110 @@ dataset_dir = Path(r'________________________')  # <-- UPDATE THIS PATH
 emotions = ['Anger', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad']
 
 # Load video file paths and integer labels
-video_paths = []
-labels = []
+# Each video is treated as ONE record, with an explicit video_id.
+video_records = []
 
 for label, emotion in enumerate(emotions):
     emotion_dir = dataset_dir / emotion
+
+    if not emotion_dir.is_dir():
+        print(f"Warning: Emotion folder '{emotion}' not found, skipping...")
+        continue
+
     for video in os.listdir(emotion_dir):
         if video.endswith('.mp4'):  # Adjust extension if your videos use a different format
-            video_paths.append(str(emotion_dir / video))
-            labels.append(label)
+            video_path = str(emotion_dir / video)
 
-# Build HuggingFace Dataset object
-dataset = Dataset.from_dict({'video': video_paths, 'label': labels})
+            # Same video_id concept used in the previous ResNet50 code
+            video_id = f"{emotion}/{os.path.splitext(video)[0]}"
 
-# Train/Validation split: 90% train, 10% validation
-splits = dataset.train_test_split(test_size=0.1)
-train_ds = splits['train']
-val_ds   = splits['test']
+            video_records.append({
+                'video': video_path,
+                'label': label,
+                'video_id': video_id
+            })
 
-print(f"Training set size:   {len(train_ds)}")
-print(f"Validation set size: {len(val_ds)}")
+
+# ==============================================================================
+# VIDEO-LEVEL STRATIFIED 80:20 SPLIT
+# Same methodology as the previous ResNet50 experiment
+# ==============================================================================
+
+video_to_label = {}
+
+for record in video_records:
+    video_id = record["video_id"]
+    label = int(record["label"])
+
+    if video_id in video_to_label:
+        if video_to_label[video_id] != label:
+            raise RuntimeError(
+                f"Video ID '{video_id}' has inconsistent labels."
+            )
+    else:
+        video_to_label[video_id] = label
+
+
+# Build unique video IDs and their corresponding labels
+unique_video_ids = np.asarray(list(video_to_label.keys()))
+
+unique_video_labels = np.asarray(
+    [video_to_label[v] for v in unique_video_ids],
+    dtype=np.int64,
+)
+
+
+# Split UNIQUE VIDEOS, not frames
+train_video_ids, val_video_ids = train_test_split(
+    unique_video_ids,
+    test_size=0.20,
+    random_state=42,
+    shuffle=True,
+    stratify=unique_video_labels,
+)
+
+
+# Convert video IDs to sets for complete-video assignment
+train_set = set(train_video_ids)
+val_set = set(val_video_ids)
+
+
+# Explicit leakage check
+if train_set & val_set:
+    raise RuntimeError("Video-level data leakage detected.")
+
+
+# Assign complete videos to train/validation according to video_id
+train_records = [
+    record for record in video_records
+    if record["video_id"] in train_set
+]
+
+val_records = [
+    record for record in video_records
+    if record["video_id"] in val_set
+]
+
+
+# Build HuggingFace Dataset objects AFTER the video-level split
+train_ds = Dataset.from_dict({
+    'video': [record['video'] for record in train_records],
+    'label': [record['label'] for record in train_records],
+    'video_id': [record['video_id'] for record in train_records],
+})
+
+val_ds = Dataset.from_dict({
+    'video': [record['video'] for record in val_records],
+    'label': [record['label'] for record in val_records],
+    'video_id': [record['video_id'] for record in val_records],
+})
+
+
+print(f"Number of unique videos: {len(unique_video_ids)}")
+print(f"Training videos:        {len(train_video_ids)}")
+print(f"Validation videos:      {len(val_video_ids)}")
+print(f"Training set size:      {len(train_ds)}")
+print(f"Validation set size:    {len(val_ds)}")
 
 # Label mappings (integer index <-> emotion name)
 id2label = {id: label for id, label in enumerate(emotions)}
