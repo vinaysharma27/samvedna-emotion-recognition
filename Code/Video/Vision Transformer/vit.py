@@ -3,10 +3,6 @@
 import gc
 gc.collect()  # Free memory
 
-# ==============================================================================
-# SECTION 1: IMPORTS & DATASET LOADING
-# ==============================================================================
-
 from datasets import Dataset
 from pathlib import Path
 import os
@@ -53,12 +49,6 @@ for label, emotion in enumerate(emotions):
                 'label': label,
                 'video_id': video_id
             })
-
-
-# ==============================================================================
-# VIDEO-LEVEL STRATIFIED 80:20 SPLIT
-# Same methodology as the previous ResNet50 experiment
-# ==============================================================================
 
 video_to_label = {}
 
@@ -142,11 +132,6 @@ label2id = {label: id for id, label in id2label.items()}
 
 print(f"Example label for sample 0: {id2label[train_ds[0]['label']]}")
 
-
-# ==============================================================================
-# SECTION 2: VIDEO FRAME EXTRACTION & DATA TRANSFORMS
-# ==============================================================================
-
 import cv2
 from PIL import Image
 from torchvision.transforms import (
@@ -187,14 +172,7 @@ _val_transforms = Compose([
 
 def extract_frames(video_path, frame_rate=30):
     """
-    Extract frames from a video file, keeping 1 frame every 'frame_rate' frames.
-
-    Args:
-        video_path (str): Path to the .mp4 video file.
-        frame_rate (int): Interval for frame sampling (default: every 30th frame).
-
-    Returns:
-        list[PIL.Image]: List of extracted frames as PIL Images.
+ 
     """
     cap = cv2.VideoCapture(video_path)
     frames = []
@@ -213,7 +191,7 @@ def extract_frames(video_path, frame_rate=30):
 
 
 def train_transforms(examples):
-    """Apply training augmentation transforms to a batch of video paths."""
+    """ """
     video_frames = [extract_frames(vp) for vp in examples['video']]
     examples['pixel_values'] = [
         [_train_transforms(frame.convert("RGB")) for frame in frames]
@@ -223,7 +201,7 @@ def train_transforms(examples):
 
 
 def val_transforms(examples):
-    """Apply validation transforms to a batch of video paths."""
+    """    """
     video_frames = [extract_frames(vp) for vp in examples['video']]
     examples['pixel_values'] = [
         [_val_transforms(frame.convert("RGB")) for frame in frames]
@@ -236,11 +214,6 @@ def val_transforms(examples):
 train_ds.set_transform(train_transforms)
 val_ds.set_transform(val_transforms)
 
-
-# ==============================================================================
-# SECTION 3: DATA COLLATION (batching frames into tensors)
-# ==============================================================================
-
 import torchvision.transforms as T
 
 max_frames   = 100          # Maximum frames per video to process
@@ -251,15 +224,6 @@ resize_transform = T.Resize(target_size)
 
 def collate_fn(examples):
     """
-    Custom collate function for DataLoader.
-    Extracts frames, resizes them, averages across the time dimension,
-    and stacks into a batch tensor of shape (batch_size, C, H, W).
-
-    Args:
-        examples (list[dict]): Each dict has 'pixel_values' (list of tensors) and 'label'.
-
-    Returns:
-        dict: {'pixel_values': Tensor(B, C, H, W), 'labels': Tensor(B,)}
     """
     pixel_values = []
     labels = []
@@ -296,11 +260,6 @@ for k, v in batch.items():
     if isinstance(v, torch.Tensor):
         print(f"Batch key: {k}, shape: {v.shape}")
 
-
-# ==============================================================================
-# SECTION 4: MODEL DEFINITION & TRAINING
-# ==============================================================================
-
 from transformers import ViTForImageClassification, ViTImageProcessor
 from transformers import TrainingArguments, Trainer
 from sklearn.metrics import accuracy_score
@@ -316,7 +275,7 @@ model = ViTForImageClassification.from_pretrained(
 
 
 def compute_metrics(eval_pred):
-    """Compute accuracy score for evaluation during training."""
+    """ """
     predictions, labels = eval_pred
     predictions = np.argmax(predictions, axis=1)
     return dict(accuracy=accuracy_score(predictions, labels))
@@ -354,10 +313,6 @@ print("\n[INFO] Starting training...")
 trainer.train()
 print("[INFO] Training complete.")
 
-
-# ==============================================================================
-# SECTION 5: EVALUATION — Confusion Matrix & Classification Report
-# ==============================================================================
 
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 import matplotlib.pyplot as plt
