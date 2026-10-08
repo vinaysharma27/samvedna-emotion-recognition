@@ -16,23 +16,19 @@ import tensorflow.keras.backend as K
 K.set_image_data_format('channels_last')
 
 # Define dataset path
-dataset_path = 'D:/All emotions/Video'  # New dataset path
+dataset_path = '----'  # New dataset path
 emotion_labels = ['Anger', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad']  # 6 emotion labels
 
-# Function to load images from video folders
 def load_images_from_video_folder(dataset_path, batch_size=64, frame_skip=10):
     records = []
 
-    # Iterate through each emotion folder
     for emotion in emotion_labels:
         emotion_folder = os.path.join(dataset_path, emotion)
 
-        # Check if the emotion folder exists
         if not os.path.isdir(emotion_folder):
             print(f"Warning: Emotion folder '{emotion}' not found, skipping...")
             continue
 
-        # Iterate through each video file in the emotion folder
         for video_file in os.listdir(emotion_folder):
             video_path = os.path.join(emotion_folder, video_file)
 
@@ -84,10 +80,7 @@ def load_images_from_video_folder(dataset_path, batch_size=64, frame_skip=10):
 records = load_images_from_video_folder(dataset_path)
 
 
-# ============================================================
-# VIDEO-LEVEL STRATIFIED 80:20 SPLIT
-# Same structure as the previous video-level code
-# ============================================================
+
 
 video_to_label = {}
 
